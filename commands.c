@@ -171,6 +171,9 @@ int cmd_add(Args args) {
 	int pos1 = atoi(args.arg_v[1]);
 	int pos2 = atoi(args.arg_v[2]);
 	
+	if (pos1 < 0 || pos1 >= registry.count) return 1;
+	if (pos2 < 0 || pos2 >= registry.count) return 1;
+	
 	//dimension mismatch lmao its so ugly
 	if(registry.data[pos1].rows != registry.data[pos2].rows || registry.data[pos1].cols != registry.data[pos2].cols) return 1;
 	
@@ -191,6 +194,9 @@ int cmd_subtract(Args args) {
 	
 	int pos1 = atoi(args.arg_v[1]);
 	int pos2 = atoi(args.arg_v[2]);
+	
+	if (pos1 < 0 || pos1 >= registry.count) return 1;
+	if (pos2 < 0 || pos2 >= registry.count) return 1;	
 	
 	//dimension mismatch lmao its so ugly
 	if(registry.data[pos1].rows != registry.data[pos2].rows || registry.data[pos1].cols != registry.data[pos2].cols) return 1;
@@ -213,6 +219,8 @@ int cmd_kmult(Args args) {
 	int posA = atoi(args.arg_v[1]);
 	int k = atoi(args.arg_v[2]);
 	
+	if (posA < 0 || posA >= registry.count) return 1;	
+	
 	Matrix result = kmult(registry.data[posA], k);
 	
 	printMatrix(result);
@@ -230,6 +238,9 @@ int cmd_multiply(Args args) {
 	
 	int pos1 = atoi(args.arg_v[1]);
 	int pos2 = atoi(args.arg_v[2]);
+	
+	if (pos1 < 0 || pos1 >= registry.count) return 1;
+	if (pos2 < 0 || pos2 >= registry.count) return 1;
 	
 	if(registry.data[pos1].cols != registry.data[pos2].rows) return 1;
 	
@@ -249,6 +260,8 @@ int cmd_transpose(Args args) {
 	if(args.arg_c < 2) return 1;
 	
 	int pos = atoi(args.arg_v[1]);
+	
+	if (pos < 0 || pos >= registry.count) return 1;
 	
 	Matrix result = transpose(registry.data[pos]);
 	
