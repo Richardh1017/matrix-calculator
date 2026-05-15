@@ -1,0 +1,108 @@
+#ifndef CALCULATOR_H
+#define CALCULATOR_H
+
+typedef struct {
+	
+	int arg_c;
+	char **arg_v;
+	
+} Args;
+
+typedef int (*cmd_fn)(Args);
+
+typedef struct {
+	
+	char *name;
+	char *desc;
+	cmd_fn function;
+	
+} Command;
+
+#define COMMAND_CT 11
+
+extern Command cmds[COMMAND_CT];
+
+///////////////////////////////////////////
+
+typedef struct {
+	
+	int rows;
+	int cols;
+	float **data;
+	
+} Matrix;
+
+typedef struct {
+	
+	int count;
+	Matrix *data;
+	
+} Registry;
+
+extern Registry registry;
+
+extern Matrix math_buffer;
+
+////////////////matrix.c
+
+Registry increaseReg(Registry r);
+
+Registry decreaseReg(Registry r, int pos);
+
+Matrix createMatrix(int row, int col);
+
+void deleteMatrix(Matrix *m);
+
+void fillMatrix(Matrix *m);
+
+void printMatrix(Matrix m);
+
+////////////////matrixmath.c
+
+Matrix add(Matrix a, Matrix b);
+
+Matrix subtract(Matrix a, Matrix b);
+
+Matrix kmult(Matrix a, float k);
+
+Matrix multiply(Matrix a, Matrix b);
+
+Matrix transpose(Matrix a);
+
+Matrix ref(Matrix a);
+
+//idk
+
+void saveQuestion(Matrix result);
+
+////////////////commands.c
+
+int cmd_help(Args args);
+
+int cmd_exit(Args args);
+
+int cmd_create(Args args);
+
+int cmd_delete(Args args);
+
+int cmd_print(Args args);
+
+int cmd_list(Args args);
+
+int cmd_add(Args args);
+
+int cmd_subtract(Args args);
+
+int cmd_kmult(Args args);
+
+int cmd_multiply(Args args);
+
+int cmd_transpose(Args args);
+
+////////////////calculator.c
+
+Args readLine(char *line);
+
+int runCommand(Args args);
+
+#endif
