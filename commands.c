@@ -231,7 +231,7 @@ int cmd_multiply(Args args) {
 	int pos1 = atoi(args.arg_v[1]);
 	int pos2 = atoi(args.arg_v[2]);
 	
-	if(registry.data[pos1].rows != registry.data[pos2].cols) return 1;
+	if(registry.data[pos1].cols != registry.data[pos2].rows) return 1;
 	
 	Matrix result = multiply(registry.data[pos1], registry.data[pos2]);
 	
