@@ -9,3 +9,7 @@ Matrix calculator runs like a terminal, written in C.
 	Scalar/Matrix multiplication
 	Tranpose
 	Somewhat legible matrix printing
+
+## Building
+
+If you have GCC installed, just run compile.bat
