@@ -20,7 +20,7 @@ typedef struct {
 
 #define COMMAND_CT 12
 
-#define EPSILON 1e-7
+#define EPSILON 1e-6
 
 extern Command cmds[COMMAND_CT];
 
