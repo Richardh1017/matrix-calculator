@@ -218,7 +218,7 @@ int cmd_kmult(Args args) {
 	if(args.arg_c < 3) return 1;
 	
 	int posA = atoi(args.arg_v[1]);
-	int k = atoi(args.arg_v[2]);
+	float k = atof(args.arg_v[2]);
 	
 	if (posA < 0 || posA >= registry.count) return 1;	
 	
