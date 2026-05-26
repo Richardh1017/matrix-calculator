@@ -5,10 +5,11 @@ Matrix calculator runs like a terminal, written in C.
 ## Current features
 
 	Dynamic matrix registry
+	Option to save results
 	Addition/Subtraction
 	Scalar/Matrix multiplication
 	Tranpose
-	Somewhat legible matrix printing
+	RREF with steps
 
 ## Building
 
