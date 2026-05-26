@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "calculator.h"
 
 Registry increaseReg(Registry r) {
@@ -52,8 +53,9 @@ void fillMatrix(Matrix *m) {
 	
 	char buffer[100];
 	float val;
+	int exit = 0;
 	
-	puts("");
+	printf("\ninput 'cancel' to stop\n");
 	
 	for(int i = 0; i < m->rows; i++) {
 		
@@ -61,11 +63,27 @@ void fillMatrix(Matrix *m) {
 			
 			printf("(%d, %d) val: ", i, j);
 			
+			if(exit == 1) {
+				
+				m->data[i][j] = 0;
+				
+				puts("0");
+				continue;
+			}
+			
 			fgets(buffer, sizeof(buffer) - 1, stdin);
 			
+			//set exit to 1 to zero out the matrix so u can manually delete later
+			
+			if ((strcmp(buffer, "cancel\n") == 0) && exit == 0) {
+				
+				exit = 1;
+				
+				m->data[i][j] = 0;
+				continue;
+			}
+			
 			val = atof(buffer);
-			
-			
 			
 			m->data[i][j] = val;
 			

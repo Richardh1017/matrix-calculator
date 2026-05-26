@@ -23,6 +23,7 @@ Command cmds[COMMAND_CT] = {
 	{"transpose", "transpose matrix, syntax: transpose [POSITION]\n", cmd_transpose},
 	
 	//HARDER MATH
+	{"rref", "get RREF of matrix using Gaussian-Jordan elimination, syntax: rref [POSITION]\n", cmd_rref}
 };
 
 
@@ -264,6 +265,26 @@ int cmd_transpose(Args args) {
 	if (pos < 0 || pos >= registry.count) return 1;
 	
 	Matrix result = transpose(registry.data[pos]);
+	
+	printMatrix(result);
+	puts("");
+	
+	saveQuestion(result);
+	deleteMatrix(&math_buffer);
+	
+	
+	return 0;
+}
+
+int cmd_rref(Args args) {
+	
+	if(args.arg_c < 2) return 1;
+	
+	int pos = atoi(args.arg_v[1]);
+	
+	if (pos < 0 || pos >= registry.count) return 1;
+	
+	Matrix result = rref(registry.data[pos]);
 	
 	printMatrix(result);
 	puts("");

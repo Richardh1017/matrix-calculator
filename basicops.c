@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include "calculator.h"
 
 Matrix math_buffer = {0};
@@ -16,6 +17,8 @@ Matrix add(Matrix a, Matrix b) {
 		for(int j = 0; j < math_buffer.cols; j++) {
 			
 			math_buffer.data[i][j] = a.data[i][j] + b.data[i][j];
+			
+			if(fabs(math_buffer.data[i][j]) < EPSILON) math_buffer.data[i][j] = 0;
 		}
 	}
 	
@@ -31,6 +34,8 @@ Matrix subtract(Matrix a, Matrix b) {
 		for(int j = 0; j < math_buffer.cols; j++) {
 			
 			math_buffer.data[i][j] = a.data[i][j] - b.data[i][j];
+			
+			if(fabs(math_buffer.data[i][j]) < EPSILON) math_buffer.data[i][j] = 0;
 		}
 	}
 	
@@ -46,6 +51,7 @@ Matrix kmult(Matrix a, float k) {
 		for(int j = 0; j < math_buffer.cols; j++) {
 			
 			math_buffer.data[i][j] = a.data[i][j] * k;
+			
 		}
 		
 	}
@@ -71,6 +77,8 @@ Matrix multiply(Matrix a, Matrix b) {
 			
 			math_buffer.data[i][j] = temp;
 			temp = 0;
+			
+			if(fabs(math_buffer.data[i][j]) < EPSILON) math_buffer.data[i][j] = 0;
 			
 		}
 	}

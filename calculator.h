@@ -18,7 +18,9 @@ typedef struct {
 	
 } Command;
 
-#define COMMAND_CT 11
+#define COMMAND_CT 12
+
+#define EPSILON 1e-7
 
 extern Command cmds[COMMAND_CT];
 
@@ -57,7 +59,7 @@ void fillMatrix(Matrix *m);
 
 void printMatrix(Matrix m);
 
-////////////////matrixmath.c
+////////////////basicops.c
 
 Matrix add(Matrix a, Matrix b);
 
@@ -71,9 +73,25 @@ Matrix transpose(Matrix a);
 
 Matrix ref(Matrix a);
 
-//idk
+void saveQuestion(Matrix result); //idk its just here
 
-void saveQuestion(Matrix result);
+////////////////advancedops.c
+
+void scale_row(Matrix *a, float k, int row);
+
+void add_row(Matrix *a, int rA, int rB);
+
+void swap_row(Matrix *a, int rA, int rB);
+
+int find_pivot(Matrix *a, int col, int currentpivot);
+
+int arrange_pivot(Matrix *a, int col, int pivotrow);
+
+void eliminate_column(Matrix *a, int col, int pivotrow);
+
+void reduce_row(Matrix *a, int row);
+
+Matrix rref(Matrix a);
 
 ////////////////commands.c
 
@@ -98,6 +116,8 @@ int cmd_kmult(Args args);
 int cmd_multiply(Args args);
 
 int cmd_transpose(Args args);
+
+int cmd_rref(Args args);
 
 ////////////////calculator.c
 
