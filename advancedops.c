@@ -207,7 +207,7 @@ int arrange_pivot_det(Matrix *a, int col, int trackingpivot) {
 	if(pivotrow >= a->rows) return 1;
 	
 	if(pivotrow != (trackingpivot + 1)) {
-		swap_row(a, pivotrow, trackingpivot + 1);
+		swap_row(a, pivotrow, trackingpivot + 1); //still + 1 very inconvenient
 		return 2; //if a swap happened, det function needs to know. go horse
 	}
 
@@ -312,4 +312,134 @@ float det(Matrix a) {
 	}
 	
 	return determinant;
+}
+
+/////////////////////////INVERSE
+
+//same as rref, just apply the same transformations to an identity matrix
+
+int arrange_pivot_inv(Matrix *a, Matrix *b, int col, int trackingpivot) {
+	
+	int pivotrow = find_pivot(a, col, trackingpivot);
+	
+	if(pivotrow >= a->rows) return 1;
+	
+	if(pivotrow != (trackingpivot + 1)) {
+		
+		printf("R%d <-> R%d:\n", pivotrow, trackingpivot + 1);
+		
+		swap_row(a, pivotrow, trackingpivot + 1);
+		swap_row(b, pivotrow, trackingpivot + 1);
+		
+		printMatrix(*b);
+	}
+
+	return 0;
+}
+
+void eliminate_column_inv(Matrix *a, Matrix *b, int col, int row) {
+	
+	float val = a->data[row][col];
+	float k = 0;
+	
+	for(int i = 0; i < a->rows; i++) {
+		
+		if(i == row || a->data[i][col] == 0) continue;
+		
+		k = (a->data[i][col] / val);
+		
+		scale_row(a, k, row);
+		scale_row(b, k, row);
+		
+		if (fabs(a->data[row][col] + a->data[i][col]) > EPSILON) {
+			
+			scale_row(a, -1, row);
+			scale_row(b, -1, row);
+			k *= -1;
+		}
+		
+		add_row(a, i, row);
+		add_row(b, i, row);
+		
+		scale_row(a, (1/k), row);
+		scale_row(b, (1/k), row);
+		
+		printf("eliminated R%d with R%d:\n", i, row);
+		printMatrix(*b);
+		
+	}
+}
+
+void reduce_row_inv(Matrix *a, Matrix *b, int row) {
+	
+	float k = 0;
+	
+	for(int i = 0; i < a->cols; i++) {
+		
+		if(fabs(a->data[row][i]) < EPSILON) continue;
+		
+		k = a->data[row][i];
+		break;
+	}
+	
+	if(fabs(k) > EPSILON) {
+		scale_row(a, (1/k), row);
+		scale_row(b, (1/k), row);
+	}
+}
+
+Matrix inverse(Matrix a) {
+	
+	int trackingpivot = -1;
+	
+	math_buffer = createMatrix(a.rows, a.cols);
+	
+	Matrix math_buffer2 = createMatrix(a.rows, a.cols);
+	
+	for(int i = 0; i < a.rows; i++) {
+		for(int k = 0; k < a.cols; k++) {
+			
+			math_buffer2.data[i][k] = a.data[i][k];
+		}
+	}
+	
+	for(int i = 0; i < a.rows; i++) {
+		for(int k = 0; k < a.cols; k++) {
+			
+			if(i == k) {
+				
+				math_buffer.data[i][k] = 1;
+				continue;
+			}
+			
+			math_buffer.data[i][k] = 0;
+		}
+	}
+	
+	for(int i = 0; i < a.cols; i++) {
+		
+		if(arrange_pivot_inv(&math_buffer2, &math_buffer, i, trackingpivot) == 1) {
+			
+			printf("no pivot in column\n\n");
+			continue;
+		}
+		
+		trackingpivot++;
+		printf("pivot tracking = R%d\n\n", trackingpivot);
+		
+		eliminate_column_inv(&math_buffer2, &math_buffer, i, trackingpivot);
+		
+	}
+	
+	for(int i = 0; i < a.rows; i++) {
+		reduce_row_inv(&math_buffer2, &math_buffer, i);
+	}
+	
+	if (singularity_check(math_buffer2) == 1) {
+		puts("Matrix is singular, matrix shown is not the inverse:\n");
+	}
+	
+	deleteMatrix(&math_buffer2);
+	
+	return math_buffer;
 }

@@ -18,7 +18,7 @@ typedef struct {
 	
 } Command;
 
-#define COMMAND_CT 13
+#define COMMAND_CT 14
 
 #define EPSILON 1e-6
 
@@ -101,6 +101,8 @@ void eliminate_column_det(Matrix *a, int col, int row);
 
 float det(Matrix a);
 
+Matrix inverse(Matrix a);
+
 ////////////////commands.c
 
 int cmd_help(Args args);
@@ -128,6 +130,8 @@ int cmd_transpose(Args args);
 int cmd_rref(Args args);
 
 int cmd_det(Args args);
+
+int cmd_inverse(Args args);
 
 ////////////////calculator.c
 

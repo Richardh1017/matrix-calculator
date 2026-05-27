@@ -24,7 +24,8 @@ Command cmds[COMMAND_CT] = {
 	
 	//HARDER MATH
 	{"rref", "get RREF of matrix using Gaussian-Jordan elimination, syntax: rref [POSITION]", cmd_rref},
-	{"det", "get determinant of matrix using upper triangular elimination, syntax: det [POSITION]\n", cmd_det}
+	{"det", "get determinant of matrix using upper triangular elimination, syntax: det [POSITION]", cmd_det},
+	{"inverse", "get inverse of matrix using Gaussian-Jordan elimination, syntax: inverse [POSITION]\n", cmd_inverse}
 };
 
 
@@ -310,6 +311,27 @@ int cmd_det(Args args) {
 	
 	determinant = det(registry.data[pos]);
 	printf("Determinant = %.3f\n\n", determinant);
+	
+	return 0;
+}
+
+int cmd_inverse(Args args) {
+	
+	if(args.arg_c < 2) return 1;
+	
+	int pos = atoi(args.arg_v[1]);
+	
+	if (pos < 0 || pos >= registry.count) return 1;
+	
+	if (registry.data[pos].cols != registry.data[pos].rows) return 1;
+	
+	Matrix result = inverse(registry.data[pos]);
+	
+	printMatrix(result);
+	puts("");
+	
+	saveQuestion(result);
+	deleteMatrix(&math_buffer);
 	
 	return 0;
 }
