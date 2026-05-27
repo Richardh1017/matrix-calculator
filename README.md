@@ -10,6 +10,8 @@ Matrix calculator runs like a terminal, written in C.
 	Scalar/Matrix multiplication
 	Tranpose
 	RREF with steps
+	Inverse with steps
+	Determinant
 
 ## Building
 
