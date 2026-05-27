@@ -18,7 +18,7 @@ typedef struct {
 	
 } Command;
 
-#define COMMAND_CT 14
+#define COMMAND_CT 16
 
 #define EPSILON 1e-6
 
@@ -71,7 +71,7 @@ Matrix multiply(Matrix a, Matrix b);
 
 Matrix transpose(Matrix a);
 
-Matrix ref(Matrix a);
+float trace(Matrix a);
 
 void saveQuestion(Matrix result); //idk its just here
 
@@ -95,11 +95,25 @@ int singularity_check(Matrix a);
 
 Matrix rref(Matrix a);
 
+//
+
 int arrange_pivot_det(Matrix *a, int col, int trackingpivot);
 
 void eliminate_column_det(Matrix *a, int col, int row);
 
 float det(Matrix a);
+
+//
+
+int get_rank(Matrix a);
+
+//
+
+int arrange_pivot_inv(Matrix *a, Matrix *b, int col, int trackingpivot);
+
+void eliminate_column_inv(Matrix *a, Matrix *b, int col, int row);
+
+void reduce_row_inv(Matrix *a, Matrix *b, int row);
 
 Matrix inverse(Matrix a);
 
@@ -127,7 +141,11 @@ int cmd_multiply(Args args);
 
 int cmd_transpose(Args args);
 
+int cmd_trace(Args args);
+
 int cmd_rref(Args args);
+
+int cmd_rank(Args args);
 
 int cmd_det(Args args);
 

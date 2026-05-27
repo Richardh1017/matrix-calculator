@@ -86,6 +86,17 @@ Matrix multiply(Matrix a, Matrix b) {
 	return math_buffer;
 }
 
+float trace(Matrix a) {
+	
+	float trace = 0;
+	
+	for(int i = 0; i < a.rows; i++) {
+		trace += a.data[i][i];
+	}
+	
+	return trace;
+}
+
 Matrix transpose(Matrix a) {
 	
 	math_buffer = createMatrix(a.cols, a.rows);

@@ -314,6 +314,37 @@ float det(Matrix a) {
 	return determinant;
 }
 
+/////////////////////////RANK
+
+int get_rank(Matrix a) {
+	
+	int rank = 0;
+	int trackingpivot = -1;
+	
+	math_buffer = createMatrix(a.rows, a.cols);
+	
+	for(int i = 0; i < a.rows; i++) {
+		for(int k = 0; k < a.cols; k++) {
+			
+			math_buffer.data[i][k] = a.data[i][k];
+		}
+	}
+	
+	for(int i = 0; i < a.cols; i++) {
+		
+		if(arrange_pivot_det(&math_buffer, i, trackingpivot) == 1) {
+			continue;
+		}
+		
+		trackingpivot++;
+		eliminate_column_det(&math_buffer, i, trackingpivot);
+	}
+	
+	rank = trackingpivot + 1;
+	
+	return rank;
+}
+
 /////////////////////////INVERSE
 
 //same as rref, just apply the same transformations to an identity matrix
@@ -326,12 +357,8 @@ int arrange_pivot_inv(Matrix *a, Matrix *b, int col, int trackingpivot) {
 	
 	if(pivotrow != (trackingpivot + 1)) {
 		
-		printf("R%d <-> R%d:\n", pivotrow, trackingpivot + 1);
-		
 		swap_row(a, pivotrow, trackingpivot + 1);
 		swap_row(b, pivotrow, trackingpivot + 1);
-		
-		printMatrix(*b);
 	}
 
 	return 0;
@@ -363,10 +390,6 @@ void eliminate_column_inv(Matrix *a, Matrix *b, int col, int row) {
 		
 		scale_row(a, (1/k), row);
 		scale_row(b, (1/k), row);
-		
-		printf("eliminated R%d with R%d:\n", i, row);
-		printMatrix(*b);
-		
 	}
 }
 
@@ -419,24 +442,15 @@ Matrix inverse(Matrix a) {
 	for(int i = 0; i < a.cols; i++) {
 		
 		if(arrange_pivot_inv(&math_buffer2, &math_buffer, i, trackingpivot) == 1) {
-			
-			printf("no pivot in column\n\n");
 			continue;
 		}
 		
 		trackingpivot++;
-		printf("pivot tracking = R%d\n\n", trackingpivot);
-		
 		eliminate_column_inv(&math_buffer2, &math_buffer, i, trackingpivot);
-		
 	}
 	
 	for(int i = 0; i < a.rows; i++) {
 		reduce_row_inv(&math_buffer2, &math_buffer, i);
-	}
-	
-	if (singularity_check(math_buffer2) == 1) {
-		puts("Matrix is singular, matrix shown is not the inverse:\n");
 	}
 	
 	deleteMatrix(&math_buffer2);

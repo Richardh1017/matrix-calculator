@@ -20,12 +20,14 @@ Command cmds[COMMAND_CT] = {
 	{"subtract", "subtract 2 matrices, syntax: subtract [POSITION 1] [POSITION 2]", cmd_subtract},
 	{"kmult", "multiply matrix by constant k, syntax: kmult [POSITION] [k]", cmd_kmult},
 	{"multiply", "matrix multiplication, syntax: multiply [POSITION 1] [POSITION 2]", cmd_multiply},
-	{"transpose", "transpose matrix, syntax: transpose [POSITION]\n", cmd_transpose},
+	{"transpose", "transpose matrix, syntax: transpose [POSITION]", cmd_transpose},
+	{"trace", "get trace of matrix, syntax: trace [POSITION]\n", cmd_trace},
 	
 	//HARDER MATH
 	{"rref", "get RREF of matrix using Gaussian-Jordan elimination, syntax: rref [POSITION]", cmd_rref},
-	{"det", "get determinant of matrix using upper triangular elimination, syntax: det [POSITION]", cmd_det},
-	{"inverse", "get inverse of matrix using Gaussian-Jordan elimination, syntax: inverse [POSITION]\n", cmd_inverse}
+	{"rank", "get rank of matrix using Gaussian-Jordan elimination, syntax: rank [POSITION]", cmd_rank},
+	{"inverse", "get inverse of matrix using Gaussian-Jordan elimination, syntax: inverse [POSITION]", cmd_inverse},
+	{"det", "get determinant of matrix using upper triangular elimination, syntax: det [POSITION]\n", cmd_det}
 };
 
 
@@ -94,6 +96,8 @@ int cmd_delete(Args args) {
 	if (args.arg_c < 2) return 1;
 	
 	if (strcmp(args.arg_v[1], "all") == 0) {
+		
+		if (registry.count == 0) return 1;
 		
 		for(int i = registry.count - 1; i >= 0; i--) {
 			
@@ -280,6 +284,26 @@ int cmd_transpose(Args args) {
 	return 0;
 }
 
+int cmd_trace(Args args) {
+	
+	if(args.arg_c < 2) return 1;
+	
+	int pos = atoi(args.arg_v[1]);
+	
+	if (pos < 0 || pos >= registry.count) return 1;
+	
+	if (registry.data[pos].cols != registry.data[pos].rows) {
+		
+		puts("Not a square matrix\n");
+		return 0;
+	}
+	
+	float tr = trace(registry.data[pos]);
+	printf("Trace = %.3f\n\n", tr);
+	
+	return 0;
+}
+
 int cmd_rref(Args args) {
 	
 	if(args.arg_c < 2) return 1;
@@ -297,6 +321,21 @@ int cmd_rref(Args args) {
 	deleteMatrix(&math_buffer);
 	
 	return 0;
+}
+
+int cmd_rank(Args args) {
+	
+	if(args.arg_c < 2) return 1;
+	
+	int pos = atoi(args.arg_v[1]);
+	
+	if (pos < 0 || pos >= registry.count) return 1;
+	
+	int rank = get_rank(registry.data[pos]);
+	printf("Rank = %d\n\n", rank);
+	
+	return 0;
+	
 }
 
 int cmd_det(Args args) {
@@ -323,7 +362,13 @@ int cmd_inverse(Args args) {
 	
 	if (pos < 0 || pos >= registry.count) return 1;
 	
-	if (registry.data[pos].cols != registry.data[pos].rows) return 1;
+	if (registry.data[pos].cols != registry.data[pos].rows) {
+		
+		puts("Not a square matrix\n");
+		return 0;
+	}
+	
+	if(det(registry.data[pos]) == 0) return 0;
 	
 	Matrix result = inverse(registry.data[pos]);
 	
