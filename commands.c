@@ -23,7 +23,8 @@ Command cmds[COMMAND_CT] = {
 	{"transpose", "transpose matrix, syntax: transpose [POSITION]\n", cmd_transpose},
 	
 	//HARDER MATH
-	{"rref", "get RREF of matrix using Gaussian-Jordan elimination, syntax: rref [POSITION]\n", cmd_rref}
+	{"rref", "get RREF of matrix using Gaussian-Jordan elimination, syntax: rref [POSITION]", cmd_rref},
+	{"det", "get determinant of matrix using upper triangular elimination, syntax: det [POSITION]\n", cmd_det}
 };
 
 
@@ -81,6 +82,8 @@ int cmd_create(Args args) {
 	registry = increaseReg(registry);
 	
 	registry.data[registry.count - 1] = m;
+	
+	printf("Matrix %d created\n\n", registry.count - 1);
 	
 	return 0;
 }
@@ -292,6 +295,21 @@ int cmd_rref(Args args) {
 	saveQuestion(result);
 	deleteMatrix(&math_buffer);
 	
+	return 0;
+}
+
+int cmd_det(Args args) {
+	
+	float determinant = 0;
+	
+	if(args.arg_c < 2) return 1;
+	
+	int pos = atoi(args.arg_v[1]);
+	
+	if (pos < 0 || pos >= registry.count) return 1;
+	
+	determinant = det(registry.data[pos]);
+	printf("Determinant = %.3f\n\n", determinant);
 	
 	return 0;
 }

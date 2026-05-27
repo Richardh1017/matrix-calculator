@@ -52,8 +52,8 @@ Matrix kmult(Matrix a, float k) {
 			
 			math_buffer.data[i][j] = a.data[i][j] * k;
 			
+			if(fabs(math_buffer.data[i][j]) < EPSILON) math_buffer.data[i][j] = 0;
 		}
-		
 	}
 	
 	return math_buffer;
@@ -123,5 +123,7 @@ void saveQuestion(Matrix result) {
 				
 			}
 		}
+		
+		printf("Matrix %d saved\n\n", registry.count - 1);
 	}
 }

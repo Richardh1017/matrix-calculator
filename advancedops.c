@@ -64,7 +64,7 @@ int find_pivot(Matrix *a, int col, int trackingpivot) {
 		break;
 	}
 	
-	if(pivotrow < a->rows) printf("pivotrow is R%d\n", pivotrow);
+	//if(pivotrow < a->rows) printf("pivotrow is R%d\n", pivotrow);
 	
 	return pivotrow;
 }
@@ -136,6 +136,17 @@ void reduce_row(Matrix *a, int row) {
 	if(fabs(k) > EPSILON) scale_row(a, (1/k), row);
 }
 
+//only works on already RREFed matrices
+int singularity_check(Matrix a) {
+	
+	for(int i = 0; i < a.rows; i++) {
+		
+		if(fabs(a.data[i][i]) < EPSILON) return 1; //singular
+	}
+	
+	return 0; //nonsingular
+}
+
 /////////////////////////RREF
 
 Matrix rref(Matrix a) {
@@ -185,4 +196,120 @@ Matrix rref(Matrix a) {
 	}
 	
 	return math_buffer;
+}
+
+/////////////////////////DETERMINANT
+
+int arrange_pivot_det(Matrix *a, int col, int trackingpivot) {
+	
+	int pivotrow = find_pivot(a, col, trackingpivot);
+	
+	if(pivotrow >= a->rows) return 1;
+	
+	if(pivotrow != (trackingpivot + 1)) {
+		swap_row(a, pivotrow, trackingpivot + 1);
+		return 2; //if a swap happened, det function needs to know. go horse
+	}
+
+	return 0;
+}
+
+void eliminate_column_det(Matrix *a, int col, int row) {
+	
+	float val = a->data[row][col];
+	float k = 0;
+	
+	for(int i = 0; i < a->rows; i++) {
+		
+		if(i == row || a->data[i][col] == 0) continue;
+		
+		k = (a->data[i][col] / val);
+		scale_row(a, k, row);
+		
+		if (fabs(a->data[row][col] + a->data[i][col]) > EPSILON) {
+			
+			scale_row(a, -1, row);
+			k *= -1;
+		}
+		
+		add_row(a, i, row);
+		scale_row(a, (1/k), row);
+	}
+}
+
+//use upper triangular method
+
+float det(Matrix a) {
+	
+	float determinant = 1;
+	int trackingpivot = -1;
+	int singular;
+	
+	if (a.rows != a.cols) {
+		
+		puts("Not a square matrix\n");
+		return 0;
+	}
+	
+	//using math_buffer for now
+	math_buffer = createMatrix(a.rows, a.cols);
+	
+	for(int i = 0; i < a.rows; i++) {
+		for(int k = 0; k < a.cols; k++) {
+			
+			math_buffer.data[i][k] = a.data[i][k];
+		}
+	}
+	
+	//just gonna first check if it's nonsingular, using altered rref function
+	for(int i = 0; i < a.cols; i++) {
+		
+		if(arrange_pivot_det(&math_buffer, i, trackingpivot) == 1) {
+			continue;
+		}
+		
+		trackingpivot++;
+		eliminate_column_det(&math_buffer, i, trackingpivot);
+	}
+	
+	for(int i = 0; i < a.rows; i++) {
+		reduce_row(&math_buffer, i);
+	}
+	
+	singular = singularity_check(math_buffer);
+	
+	if(singular == 1) {
+		
+		puts("RREF:");
+		printMatrix(math_buffer);
+		
+		puts("Matrix is singular\n");
+		return 0;
+	}
+	
+	//reset math_buffer and use altered eliminate column loop. go horse
+	
+	for(int i = 0; i < a.rows; i++) {
+		for(int k = 0; k < a.cols; k++) {
+			
+			math_buffer.data[i][k] = a.data[i][k];
+		}
+	}
+	
+	for(int i = 0; i < a.rows; i++) {
+		
+		if (arrange_pivot_det(&math_buffer, i, i-1) == 2) {
+			
+			determinant *= -1;
+		}
+		
+		eliminate_column_det(&math_buffer, i, i);
+	}
+	
+	for(int i = 0; i < a.rows; i++) {
+		
+		determinant *= math_buffer.data[i][i];
+	}
+	
+	return determinant;
 }
